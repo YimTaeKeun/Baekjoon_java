@@ -9,7 +9,6 @@ public class Main {
             long result = 0;
             Queue<Integer> queue = new LinkedList<>();
             String[] temp = br.readLine().split(" ");
-            final int documentCnt = Integer.parseInt(temp[0]);
             int targetNowIndex = Integer.parseInt(temp[1]);
             temp = br.readLine().split(" ");
             for(String each: temp) queue.add(Integer.parseInt(each));
