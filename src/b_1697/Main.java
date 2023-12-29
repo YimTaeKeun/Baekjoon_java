@@ -7,7 +7,8 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         
         int target = scanner.nextInt();
-        cal.add(new Integer[] {scanner.nextInt(), 0});
+        int starter = scanner.nextInt();
+        cal.add(new Integer[] {starter, 0});
         while(true){
             Integer[] thisTarget = cal.poll();
             if(thisTarget[0] == target){
@@ -15,20 +16,19 @@ public class Main {
                 break;
             }
             Boolean[] chceckResult = isThere(thisTarget[0]);
-            if(!chceckResult[0]) cal.add(new Integer[] {thisTarget[0] + 1, thisTarget[1] + 1});
-            if(!chceckResult[1]) cal.add(new Integer[] {thisTarget[0] - 1, thisTarget[1] + 1});
-            if(thisTarget[0] % 2 == 0 && !chceckResult[2]) cal.add(new Integer[] {thisTarget[0] / 2, thisTarget[1] + 1});
+            if(!chceckResult[0] && thisTarget[0] + 1 != target && thisTarget[0] < starter * 2) cal.add(new Integer[] {thisTarget[0] + 1, thisTarget[1] + 1});
+            if(!chceckResult[1] && thisTarget[0] - 1 != target) cal.add(new Integer[] {thisTarget[0] - 1, thisTarget[1] + 1});
+            if(thisTarget[0] % 2 == 0) cal.add(new Integer[] {thisTarget[0] / 2, thisTarget[1] + 1});
         }
         scanner.close();
     }
     public static Boolean[] isThere(int thisTarget){
-        Boolean minus = false, plus = false, division = false;
+        Boolean minus = false, plus = false;
         for(var each: cal){
             if(each[0] == thisTarget + 1 && !plus) plus = true;
             if(each[0] == thisTarget - 1 && !minus) minus = true;
-            if(thisTarget % 2 == 0 && each[0] == thisTarget / 2) division = true;
-            if(plus && minus && division) break;
+            if(plus && minus) break;
         }
-        return new Boolean[] {plus, minus, division};
+        return new Boolean[] {plus, minus};
     }
 }
