@@ -2,36 +2,27 @@ package b_1697;
 
 import java.util.*;
 public class Main {
-    public static Queue<Integer[]> cal  = new LinkedList<>();
     public static void main(String[] args) {
+        Queue<Integer> cal = new LinkedList<>(), cal2 = new LinkedList<>();
         Scanner scanner = new Scanner(System.in);
-        
         int target = scanner.nextInt();
-        int starter = scanner.nextInt();
-        cal.add(new Integer[] {starter, 0});
-        while(true){
-            Integer[] temp = cal.poll();
-            if(temp[0] == target){
-                System.out.println(temp[1]);
-                break;
+        int time = 0;
+        cal.add(scanner.nextInt());
+        loop: while(true){
+            while(!cal.isEmpty()){
+                int temp = cal.poll();
+                if(temp == target) break loop;
+                if(temp % 2 == 0) cal2.add(temp / 2);
+                else{
+                    if(!cal.contains(temp - 1)) cal2.add(temp - 1);
+                    if(!cal.contains(temp + 1)) cal2.add(temp + 1);
+                }
             }
-            if(temp[0] % 2 == 0) cal.add(new Integer[] {temp[0] / 2, temp[1] + 1});
-            else{
-                Boolean[] isThereResult = isThere(temp[0]);
-                if(!isThereResult[0]) cal.add(new Integer[] {temp[0] - 1, temp[1] + 1});
-                if(!isThereResult[1]) cal.add(new Integer[] {temp[0] + 1, temp[1] + 1});
-            }
+            cal.addAll(cal2);
+            time++;
         }
+        System.out.println(time);
         scanner.close();
-    }
-    public static Boolean[] isThere(int thisTarget){
-        Boolean minus = false, plus = false;
-        for(var each: cal){
-            if(thisTarget + 1 == each[0] && !plus) plus = true;
-            if(thisTarget - 1 == each[0] && !minus) minus = true;
-            if(minus && plus) break;
-        }
-        return new Boolean[] {minus, plus};
     }
     
 }
