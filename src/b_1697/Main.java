@@ -10,25 +10,28 @@ public class Main {
         int starter = scanner.nextInt();
         cal.add(new Integer[] {starter, 0});
         while(true){
-            Integer[] thisTarget = cal.poll();
-            if(thisTarget[0] == target){
-                System.out.println(thisTarget[1]);
+            Integer[] temp = cal.poll();
+            if(temp[0] == target){
+                System.out.println(temp[1]);
                 break;
             }
-            Boolean[] chceckResult = isThere(thisTarget[0]);
-            if(!chceckResult[0] && thisTarget[0] + 1 != target && thisTarget[0] < starter * 2) cal.add(new Integer[] {thisTarget[0] + 1, thisTarget[1] + 1});
-            if(!chceckResult[1] && thisTarget[0] - 1 != target) cal.add(new Integer[] {thisTarget[0] - 1, thisTarget[1] + 1});
-            if(thisTarget[0] % 2 == 0) cal.add(new Integer[] {thisTarget[0] / 2, thisTarget[1] + 1});
+            if(temp[0] % 2 == 0) cal.add(new Integer[] {temp[0] / 2, temp[1] + 1});
+            else{
+                Boolean[] isThereResult = isThere(temp[0]);
+                if(!isThereResult[0]) cal.add(new Integer[] {temp[0] - 1, temp[1] + 1});
+                if(!isThereResult[1]) cal.add(new Integer[] {temp[0] + 1, temp[1] + 1});
+            }
         }
         scanner.close();
     }
     public static Boolean[] isThere(int thisTarget){
         Boolean minus = false, plus = false;
         for(var each: cal){
-            if(each[0] == thisTarget + 1 && !plus) plus = true;
-            if(each[0] == thisTarget - 1 && !minus) minus = true;
-            if(plus && minus) break;
+            if(thisTarget + 1 == each[0] && !plus) plus = true;
+            if(thisTarget - 1 == each[0] && !minus) minus = true;
+            if(minus && plus) break;
         }
-        return new Boolean[] {plus, minus};
+        return new Boolean[] {minus, plus};
     }
+    
 }
