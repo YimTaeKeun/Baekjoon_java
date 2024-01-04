@@ -14,5 +14,6 @@ public class Main {
         }
         for(int i = result.length() - 1; i >= 0; i--) System.out.print(result.charAt(i));
         System.out.println();
+        scanner.close();
     }
 }
