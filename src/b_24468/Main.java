@@ -1,7 +1,6 @@
 package b_24468;
 
 import java.io.*;
-import java.util.*;
 public class Main {
     static long result = 0, length = 0;
     public static void main(String[] args) throws IOException{
