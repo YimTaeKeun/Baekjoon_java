@@ -1,54 +1,46 @@
 package b_2579;
 
 import java.io.*;
-import java.util.*;
 public class Main {
-    static Integer[] stairs;
-    static boolean finish = false;
-    static int lastOne = -1;
+    static int stairs[];
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        stairs = new Integer[Integer.parseInt(br.readLine()) + 1];
+        stairs = new int[Integer.parseInt(br.readLine()) + 1];
         for(int i = 1; i < stairs.length; i++) stairs[i] = Integer.parseInt(br.readLine());
-        if(stairs.length == 1) System.out.println(stairs[0]);
+        int[][] dpArr = new int[stairs.length][];
+        if(dpArr.length == 2) System.out.println(stairs[1]);
         else{
-            Integer[][] dpArrayAlongStairs = new Integer[stairs.length][];
-            dpArrayAlongStairs[1] = new Integer[] {stairs[1], 1};
-            dpArrayAlongStairs[2] = new Integer[] {stairs[2], 1};
-            System.out.println(Arrays.deepToString(dpArrayAlongStairs));
-            while(!finish) {
-                dpArrayAlongStairs = dpAdd(dpArrayAlongStairs);
-                System.out.println(Arrays.deepToString(dpArrayAlongStairs));
-            }
-            System.out.println(Math.max(dpArrayAlongStairs[dpArrayAlongStairs.length - 1][0], lastOne + stairs[stairs.length - 1]));
+            dpArr[1] = new int[] {stairs[1], -1};
+            dpArr[2] = new int[] {stairs[2], -1};
+            while(!isFinish(dpArr)) dpArr = dp(dpArr);
+            System.out.println(Math.max(dpArr[dpArr.length - 1][0], dpArr[dpArr.length - 1][1]));
         }
     }
-    public static Integer[][] dpAdd(Integer[][] dpArrayAlongStairs){
-        Integer[][] returnDpArray = new Integer[dpArrayAlongStairs.length][];
-        // for(int i = 1; i < dpArrayAlongStairs.length - 1; i++) if(dpArrayAlongStairs[i] != null) returnDpArray[i] = new Integer[] {dpArrayAlongStairs[i][0], dpArrayAlongStairs[i][1]};
-        if(dpArrayAlongStairs[dpArrayAlongStairs.length - 1] != null) returnDpArray[returnDpArray.length - 1] = new Integer[] {dpArrayAlongStairs[returnDpArray.length - 1][0], dpArrayAlongStairs[returnDpArray.length - 1][1]};
-        for(int i = 1; i < dpArrayAlongStairs.length - 1; i++){
-            if(dpArrayAlongStairs[i] != null){
-                if(dpArrayAlongStairs[i][1] == 1) returnDpArray[i + 1] = checkMaxObject(returnDpArray, i + 1, new Integer[] {dpArrayAlongStairs[i][0] + stairs[i + 1], 2});
-                if(i != dpArrayAlongStairs.length - 2) {
-                    returnDpArray[i + 2] = checkMaxObject(returnDpArray, i + 2, new Integer[] {dpArrayAlongStairs[i][0] + stairs[i + 2], 1});
+    public static int[][] dp(int[][] arr){
+        int[][] returnDp = new int[arr.length][];
+        if(arr[arr.length - 1] != null) returnDp[returnDp.length - 1] = new int[] {arr[arr.length - 1][0], arr[arr.length - 1][1]};
+        for(int i = 1; i < arr.length - 1; i++){
+            if(arr[i] != null){
+                if(arr[i][0] != -1){
+                    if(returnDp[i + 1] == null) returnDp[i + 1] = new int[] {-1, arr[i][0] + stairs[i + 1]};
+                    else returnDp[i + 1][1] = Math.max(returnDp[i + 1][1], arr[i][0] + stairs[i + 1]);
+                    if(i != arr.length - 2){
+                        if(returnDp[i + 2] == null) returnDp[i + 2] = new int[] {arr[i][0] + stairs[i + 2], -1};
+                        else returnDp[i + 2][0] = Math.max(returnDp[i + 2][0], arr[i][0] + stairs[i + 2]);
+                    }
+                }
+                if(arr[i][1] != -1 && i != arr.length - 2){
+                    if(returnDp[i + 2] == null) returnDp[i + 2] = new int[] {arr[i][1] + stairs[i + 2], -1};
+                    else returnDp[i + 2][0] = Math.max(returnDp[i + 2][0], arr[i][1] + stairs[i + 2]);
                 }
             }
         }
-        finish = checkFinish(returnDpArray);
-        return returnDpArray;
+        return returnDp;
     }
-    public static Integer[] checkMaxObject(Integer[][] arr, int pos, Integer[] targetObject){
-        if(arr[pos] == null) return targetObject;
-        else {
-            if(pos == arr.length - 2 && targetObject[0] > arr[pos][0]) lastOne = arr[pos][0];
-            return (targetObject[0] > arr[pos][0]) ? targetObject : arr[pos];
-        }
-    }
-    public static boolean checkFinish(Integer[][] returnDpArray){
-        int size = returnDpArray.length;
-        for(int i = 0; i < size - 2; i++) if(returnDpArray[i] != null) return false;
-        if(returnDpArray[size - 1] == null || (returnDpArray[size - 2] != null && returnDpArray[size - 2][1] == 1)) return false;
+    public static boolean isFinish(int[][] arr){
+        int size = arr.length;
+        for(int i = 0; i < size - 2; i++) if(arr[i] != null) return false;
+        if(arr[size - 1] == null || (arr[size - 2] != null && arr[size - 2][0] != -1)) return false;
         return true;
     }
 }
