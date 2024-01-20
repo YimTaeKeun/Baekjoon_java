@@ -1,73 +1,52 @@
 package b_18111;
 
 import java.io.*;
-import java.util.*;
 public class Main {
-    static Long[][] board;
-    static long blockCnt = 0;
-    static long totalCnt = 0;
-    static long min = 0;
     public static void main(String[] args) throws IOException{
-        initiallize();
-        if(min > 0) min--;
-        final int GET = 2, PUT = 1;
-        long targetFloor = (totalCnt + blockCnt) / (board.length * board[0].length);
-        if(targetFloor > 256) targetFloor = 256;
-        long time = 0;
-        List<Long[]> results = new ArrayList<>();
-        for(; targetFloor >= min; targetFloor--){
-            Long[][] nowBoard = new Long[board.length][board[0].length];
-            for(int i = 0; i < nowBoard.length; i++) nowBoard[i] = Arrays.copyOf(board[i], board[0].length);
-            long nowBlockCnt = blockCnt;
-            time = 0;
-            boolean isChanged = false;
-            long targetFloorCnt = 0;
-            do{
-                isChanged = false;
-                targetFloorCnt = 0;
-                for(int c = 0; c < nowBoard.length; c++){
-                    for(int r = 0; r < nowBoard[0].length; r++){
-                        if(targetFloor < nowBoard[c][r]){
-                            nowBlockCnt += (nowBoard[c][r] - targetFloor);
-                            time += (GET * (nowBoard[c][r] - targetFloor));
-                            nowBoard[c][r] = targetFloor;
-                            isChanged = true;
-                        }
-                        else if(targetFloor > nowBoard[c][r] && nowBlockCnt >= (targetFloor - nowBoard[c][r])){
-                            nowBlockCnt -= (targetFloor - nowBoard[c][r]);
-                            time += (PUT * (targetFloor - nowBoard[c][r]));
-                            nowBoard[c][r] = targetFloor;
-                            isChanged = true;
-                        }
-                        else if(targetFloor == nowBoard[c][r]) targetFloorCnt++;
-                    }
-                }
-            }while(isChanged);
-            if(targetFloorCnt == (long)nowBoard.length * (long)nowBoard[0].length) results.add(new Long[] {time, (long)targetFloor});
-        }
-        Long[] result = Collections.min(results, new Comparator<Long[]>() {
-            @Override
-            public int compare(Long[] target1, Long[] target2){
-                if(target1[0] != target2[0]) return (int)(target1[0] - target2[0]);
-                else return (int)(target2[1] - target1[1]);
-            }
-        });
-        System.out.println(result[0] + " " + result[1]);
-    }
-    public static void initiallize() throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] temp = br.readLine().split(" ");
-        int col = Integer.parseInt(temp[0]), row = Integer.parseInt(temp[1]);
-        board = new Long[col][row];
-        blockCnt = Integer.parseInt(temp[2]);
-        for(int c = 0; c < col; c++){
+        int col = Integer.parseInt(temp[0]);
+        int row = Integer.parseInt(temp[1]);
+        long nowBlockCnt = Long.parseLong(temp[2]);
+        long maxHeight = nowBlockCnt;
+        int minHeight = -1;
+        int[][] board = new int[col][row];
+        for(int i = 0; i < col; i++){
             temp = br.readLine().split(" ");
-            for(int r = 0; r < row; r++){
-                long t = Long.parseLong(temp[r]);
-                board[c][r] = t;
-                totalCnt += t;
-                min = Math.min(t, min);
+            for(int j = 0; j < row; j++){
+                int c = Integer.parseInt(temp[j]);
+                board[i][j] = c;
+                maxHeight += c;
+                if(minHeight == -1) minHeight = c;
+                else minHeight = Math.min(minHeight, c);
             }
         }
+        maxHeight /= (col * row);
+        maxHeight = Math.min(maxHeight, 256);
+        minHeight--;
+        if(minHeight < 0) minHeight = 0;
+        long ansTime = -1;
+        long ansHeight = 0;
+        for(long nowFloor = maxHeight; nowFloor >= minHeight; nowFloor--){
+            long time = 0;
+            for(int c = 0; c < col; c++){
+                for(int r = 0; r < row; r++){
+                    if(board[c][r] > nowFloor) time += 2 * (board[c][r] - nowFloor);
+                    else if(board[c][r] < nowFloor) time += (nowFloor - board[c][r]);
+                }
+            }
+            if(ansTime == -1){
+                ansTime = time;
+                ansHeight = nowFloor;
+            }
+            else{
+                if(ansTime == time) ansHeight = Math.max(ansHeight, nowFloor);
+                else if(ansTime > time){
+                    ansTime = Math.min(ansTime, time);
+                    ansHeight = nowFloor;
+                }
+            }
+        }
+        System.out.println(ansTime + " " + ansHeight);
     }
 }
