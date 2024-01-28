@@ -3,26 +3,34 @@ package b_1697;
 import java.util.*;
 public class Main {
     public static void main(String[] args) {
-        Queue<Integer> cal = new LinkedList<>(), cal2 = new LinkedList<>();
         Scanner scanner = new Scanner(System.in);
-        int target = scanner.nextInt();
-        int time = 0;
-        cal.add(scanner.nextInt());
-        loop: while(true){
-            while(!cal.isEmpty()){
-                int temp = cal.poll();
-                if(temp == target) break loop;
-                if(temp % 2 == 0) cal2.add(temp / 2);
-                else{
-                    if(!cal.contains(temp - 1)) cal2.add(temp - 1);
-                    if(!cal.contains(temp + 1)) cal2.add(temp + 1);
+        int startNumber = scanner.nextInt(), endNumber = scanner.nextInt();
+        int[] dp = new int[1000002];
+        Arrays.fill(dp, -1);
+        dp[startNumber] = 0;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(startNumber);
+        int result = 1;
+        while(dp[endNumber] == -1){
+            int queueSize = queue.size();
+            for(int i = 0; i < queueSize; i++){
+                int target = queue.poll();
+                if(target - 1 >= 0 && dp[target - 1] == -1){
+                    dp[target - 1] = result;
+                    queue.add(target - 1);
+                }
+                if(target + 1 <= 1000001 && dp[target + 1] == -1){
+                    dp[target + 1] = result;
+                    queue.add(target + 1);
+                }
+                if(target * 2 <= 1000001 && dp[target * 2] == -1){
+                    dp[target * 2] = result;
+                    queue.add(target * 2);
                 }
             }
-            cal.addAll(cal2);
-            time++;
+            result++;
         }
-        System.out.println(time);
+        System.out.println(dp[endNumber]);
         scanner.close();
     }
-    
 }
