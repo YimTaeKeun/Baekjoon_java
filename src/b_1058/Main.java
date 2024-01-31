@@ -52,10 +52,4 @@ class Node{
     int data = 0;
     List<Node> childNodes = new ArrayList<>(); 
     Node(int data){this.data = data;}
-    @Override
-    public boolean equals(Object target){
-        return data == ((Node)target).data;
-    }
-    @Override
-    public int hashCode(){return data;}
 }
