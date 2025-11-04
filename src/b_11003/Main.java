@@ -1,46 +1,35 @@
 package b_11003;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Scanner sc = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         Deque<Node> dq = new ArrayDeque<>();
-        int n = sc.nextInt();
-        int windowSize = sc.nextInt();
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int windowSize = Integer.parseInt(st.nextToken());
+        st = new StringTokenizer(br.readLine());
         for(int i = 0; i < n; i++){
-            System.out.println("사이클: " + i);
-            Node node = new Node(i, sc.nextInt());
-            if(i >= windowSize) {
-                System.out.println("삭제1");
-                System.out.println(dq.peekFirst());
-                dq.removeFirst();
-            }
+            Node node = new Node(i, Integer.parseInt(st.nextToken()));
 
             if(dq.isEmpty()){
-                System.out.println("추가1");
-                System.out.println(node);
                 dq.addLast(node);
             }
             else{
                 while(!dq.isEmpty() && dq.peekLast().value > node.value) {
-                    System.out.println("삭제2");
-                    System.out.println(dq.peekLast());
                     dq.removeLast();
                 }
-                System.out.println("추가2");
-                System.out.println(node);
                 dq.addLast(node);
             }
-            if(dq.peekFirst() != null) System.out.println(dq.peekFirst().value + " ");
+            if(dq.peekLast().index - dq.peekFirst().index >= windowSize) dq.removeFirst();
+            if(dq.peekFirst() != null) bw.write(dq.peekFirst().value + " ");
         }
-//        bw.flush();
+        bw.flush();
     }
 }
 class Node{
@@ -49,9 +38,5 @@ class Node{
     public Node(int index, int value){
         this.index = index;
         this.value = value;
-    }
-    @Override
-    public String toString(){
-        return "노드 정보: " + index + " " + value + "\n";
     }
 }
