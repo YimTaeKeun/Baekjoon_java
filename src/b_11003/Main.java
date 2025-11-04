@@ -29,7 +29,7 @@ public class Main {
                 dq.addLast(node);
             }
             else{
-                while(!dq.isEmpty() && dq.peek().value > node.value) {
+                while(!dq.isEmpty() && dq.peekLast().value > node.value) {
                     System.out.println("삭제2");
                     System.out.println(dq.peekLast());
                     dq.removeLast();
