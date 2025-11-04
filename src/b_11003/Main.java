@@ -38,9 +38,9 @@ public class Main {
                 System.out.println(node);
                 dq.addLast(node);
             }
-            if(dq.peekFirst() != null) bw.write(dq.peekFirst().value + " ");
+            if(dq.peekFirst() != null) System.out.println(dq.peekFirst().value + " ");
         }
-        bw.flush();
+//        bw.flush();
     }
 }
 class Node{
