@@ -1,13 +1,22 @@
 package b_1629;
 
+import java.io.*;
 import java.util.*;
 public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        Deque<Integer> deque = new ArrayDeque<>();
-        String target = scanner.next();
-        // int howMany = scanner.nextInt();
-        for(int i = 0; i < target.length(); i++) deque.addLast(Integer.parseInt(target.substring(i, i + 1)));
-        scanner.close();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        String[] temp = br.readLine().split(" ");
+        int A = Integer.parseInt(temp[0]), B = Integer.parseInt(temp[1]), C = Integer.parseInt(temp[2]);
+        long t = A % C;
+        long prev = t;
+        for(int i = 1; i < B; i++){
+            t *= A;
+            t %= C;
+            if(prev == t) break;
+            prev = t;
+        }
+        bw.write(prev+"\n");
+        bw.flush();
     }
 }
