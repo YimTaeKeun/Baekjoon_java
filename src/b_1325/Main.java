@@ -1,52 +1,60 @@
 package b_1325;
 
-import java.io.*;
 import java.util.*;
+import java.io.*;
+
 public class Main {
-    public static void main(String[] args) throws IOException{
+    public static int nodeCnt, edgeCnt;
+    public static ArrayList<Integer>[] nodeInfo; // 연결 정보
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String[] temp;
-        StringBuilder sb = new StringBuilder();
-        temp = br.readLine().split(" ");
-        int nodeCnt = Integer.parseInt(temp[0]);
-        int commandCnt = Integer.parseInt(temp[1]);
-        boolean[] isThereParents = new boolean[nodeCnt + 1];
-        Map<Integer, List<Integer>> node = new HashMap<>();
-        for(int i = 1; i <= nodeCnt; i++) node.put(i, new ArrayList<>());
-        for(int i = 0; i < commandCnt; i++){
-            temp = br.readLine().split(" ");
-            int childNodeNum = Integer.parseInt(temp[0]);
-            int parentNodeNum = Integer.parseInt(temp[1]);
-            isThereParents[childNodeNum] = true;
-            node.get(parentNodeNum).add(childNodeNum);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        nodeCnt = Integer.parseInt(st.nextToken());
+        edgeCnt = Integer.parseInt(st.nextToken());
+        nodeInfo = new ArrayList[nodeCnt + 1];
+        for(int i = 1; i <= nodeCnt; i++) nodeInfo[i] = new ArrayList<>();
+        for(int i = 0; i < edgeCnt; i++){
+            st = new StringTokenizer(br.readLine());
+            int end = Integer.parseInt(st.nextToken()), start = Integer.parseInt(st.nextToken());
+            nodeInfo[start].add(end);
         }
-        int max = 0;
-        List<Integer> resultList = new ArrayList<>();
+        Map<Integer, Integer> map = new HashMap<>();
         for(int i = 1; i <= nodeCnt; i++){
-            if(!isThereParents[i]){
-                boolean[] visit = new boolean[nodeCnt + 1];
-                Queue<Integer> queue = new LinkedList<>();
-                queue.add(i);
-                int cnt = 0;
-                while(!queue.isEmpty()){
-                    int target = queue.poll();
-                    if(visit[target]) continue;
-                    cnt++;
-                    visit[target] = true;
-                    for(Integer each: node.get(target)){
-                        queue.add(each);
-                    }
+            map.put(i, BFS(i));
+        }
+        int max = -1;
+        List<Integer> resultNodes = new ArrayList<>();
+        for(int i = 1; i <= nodeCnt; i++){
+            if(map.get(i) > max){
+                max = map.get(i);
+                resultNodes.clear();
+                resultNodes.add(i);
+            }
+            else if(map.get(i) == max) resultNodes.add(i);
+        }
+        for(Integer each: resultNodes) bw.write(each + " ");
+        bw.flush();
+
+    }
+    public static int BFS(int startNode){
+        Queue<Integer> q = new ArrayDeque<>();
+        q.add(startNode);
+        int cnt = 0;
+        boolean[] visited = new boolean[nodeCnt + 1];
+        visited[startNode] = true;
+        while(!q.isEmpty()){
+            Integer nowNode = q.poll();
+            cnt++;
+            ArrayList<Integer> nextNodes = nodeInfo[nowNode];
+            for(int i = 0; i < nextNodes.size(); i++){
+                int nextNode = nextNodes.get(i);
+                if(!visited[nextNode]){
+                    visited[nextNode] = true;
+                    q.add(nextNode);
                 }
-                if(max < cnt){
-                    resultList.clear();
-                    max = cnt;
-                    resultList.add(i);
-                } else if(max == cnt) resultList.add(i);
-                // max = Math.max(max, cnt);
             }
         }
-        resultList.sort(null);
-        for(Integer each: resultList) sb.append(each + " ");
-        System.out.println(sb);
+        return cnt;
     }
 }
