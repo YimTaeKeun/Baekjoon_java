@@ -7,16 +7,20 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         String[] temp = br.readLine().split(" ");
-        int A = Integer.parseInt(temp[0]), B = Integer.parseInt(temp[1]), C = Integer.parseInt(temp[2]);
-        long t = A % C;
-        long prev = t;
-        for(int i = 1; i < B; i++){
-            t *= A;
-            t %= C;
-            if(prev == t) break;
-            prev = t;
+        long A = Integer.parseInt(temp[0]), B = Integer.parseInt(temp[1]), C = Integer.parseInt(temp[2]);
+        System.out.println(mul(A, B, C));
+    }
+    public static long mul(long x, long y, long z){
+        if(x == z || z == 1 || x == 0) return 0;
+        if(x == 1) return 1;
+        if(y == 1) return x % z;
+        long div = x;
+        int count = 1;
+        while(div < z) {
+            div *= x;
+            count++;
         }
-        bw.write(prev+"\n");
-        bw.flush();
+        if(count > y) return ((long) Math.pow(x, y)) % z;
+        return mul(div % z, y / count, z) * (long) Math.pow(x, y % count) % z;
     }
 }
